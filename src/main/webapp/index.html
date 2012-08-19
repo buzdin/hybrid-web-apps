@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hybrid Web App Demo</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"/>
+</head>
+<body>
+
+<div class="row">
+    <div id="js-view" class="span6">
+        <div class="well">
+            <label>JavaScript</label>
+            <input id="question" type="text" class="span3" placeholder="Type a question..."/>
+            <button id="test" class="btn btn-primary">Send</button>
+            <span id="result" class="help-block"></span>
+        </div>
+    </div>
+    <div id="gwt-view" class="span6">
+        <p>&nbsp;</p>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="scripts/polyglot.js"></script>
+<script type="text/javascript" src="hybrid/hybrid.nocache.js"></script>
+<script type="text/javascript">
+
+    $(function() {
+        $bridge.subscribe('jsEvent', function (attrs, fn) {
+            $('#result').val(attrs.value);
+            fn();
+        });
+
+        $bridge.subscribe('broadcast', function (attrs, fn) {
+            $('#result').val(attrs.value);
+            fn();
+        });
+    });
+
+    $('#test').click(function () {
+        var question = $("#question").val();
+
+        $bridge.publish(
+            'broadcast',
+            {
+                value: question
+            }, function (response) {
+                $('#result').val('Answer is : ' + response.answer);
+            }
+        )
+    });
+</script>
+</body>
+</html>

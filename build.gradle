@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        flatDir(dirs: "${rootProject.projectDir}/repo")
+    }
+    dependencies {
+        classpath 'net.desource.gradle:gradle-gwt-plugin:0.3-SNAPSHOT'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+defaultTasks 'build'
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'gwt2'
+
+group = 'lv.buzdin'
+artifactId = 'gwt-hybrid-app'
+version = '0.1-SNAPSHOT'
+
+sourceCompatibility = 6
+targetCompatibility = 6
+
+dependencies {
+    gwt 'com.google.gwt:gwt-dev:2.5.0-rc1'
+    compile 'com.google.gwt:gwt-user:2.5.0-rc1'
+}
+
+gwtDevMode {
+    modules = ['lv.buzdin.gwt.Hybrid']
+    startupUrls = ['/']
+}
+
+compileGwt {
+    style = 'DETAILED' // OBF, DETAILED or PRETTY
+    localWorkers 2
+    modules = ['lv.buzdin.gwt.Hybrid']
+}
+
+war.doFirst {
+    war {
+        from("${buildDir}/gwt/out") {
+            include(['hybrid/**'])
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.1'
+}
