@@ -2,8 +2,7 @@ package lv.buzdin.gwt.client.bridge;
 
 
 import com.google.gwt.core.client.JavaScriptObject;
-import lv.buzdin.gwt.client.bridge.jsni.JSOAttributes;
-import lv.buzdin.gwt.client.bridge.jsni.JSOResponse;
+import lv.buzdin.gwt.client.bridge.jsni.JSOResponses;
 
 /**
  * @author dmitry.buzdin
@@ -13,24 +12,14 @@ public final class Responses {
     private Responses() {
     }
 
-    public static ModelAttributes data() {
+    public static ModelAttributes attributes() {
         return (ModelAttributes) JavaScriptObject.createObject().cast();
     }
 
-    public static JSOResponse ok() {
-        return createResponse(true);
-    }
-
-    public static JSOResponse fail() {
-        return createResponse(false);
-    }
-
-    public static JSOResponse createResponse(boolean success) {
-        JSOResponse response = JavaScriptObject.createObject().cast();
-        response.setSuccess(success);
-        JSOAttributes attributes = JavaScriptObject.createObject().cast();
-        response.setAttributes(attributes);
-        return response;
+    public static JSOResponses createResponses(ModelAttributes ... modelAttributes) {
+        JSOResponses result = JavaScriptObject.createObject().cast();
+        result.setResults(modelAttributes);
+        return result;
     }
 
 }

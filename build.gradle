@@ -31,6 +31,7 @@ targetCompatibility = 6
 dependencies {
     gwt 'com.google.gwt:gwt-dev:2.5.0-rc1'
     compile 'com.google.gwt:gwt-user:2.5.0-rc1'
+    test 'junit:junit:4.10'
 }
 
 gwtDevMode {

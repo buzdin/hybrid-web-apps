@@ -5,8 +5,6 @@ package lv.buzdin.gwt.client.bridge;
  */
 public interface ModelEventCallback {
 
-    void resolve();
-
-    void resolve(ModelResponse response);
+    void resolve(ModelAttributes ... response);
 
 }

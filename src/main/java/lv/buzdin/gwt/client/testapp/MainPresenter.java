@@ -2,54 +2,77 @@ package lv.buzdin.gwt.client.testapp;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.*;
 import lv.buzdin.gwt.client.bridge.*;
+import lv.buzdin.gwt.client.bridge.jsni.JSNIBridge;
 
 /**
  * @author Dmitry Buzdin
  */
 public class MainPresenter implements ClickHandler, ModelCommand {
 
-    JSNIBridge jsniBridge;
+    EventBridge bridge;
     private TextArea textArea;
+    private Button broadcast;
+    private Button send;
 
     public MainPresenter() {
-        jsniBridge = new JSNIBridge();
+        bridge = new JSNIBridge();
     }
 
     public void display() {
         RootPanel root = RootPanel.get("gwt-view");
-        SimplePanel panel = new SimplePanel();
+        VerticalPanel panel = new VerticalPanel();
         root.add(panel);
 
         panel.addStyleName("well");
-        Button button = new Button("Test");
-        button.addStyleName("btn");
-        button.addStyleName("btn-primary");
-        panel.add(button);
+        broadcast = createButton("Broadcast");
+        send = createButton("Send");
+        panel.add(broadcast);
+        panel.add(send);
 
         textArea = new TextArea();
         panel.add(textArea);
 
-        button.addClickHandler(this);
+        broadcast.addClickHandler(this);
 
-        jsniBridge.subscribe("broadcast", this);
+        bridge.subscribe("broadcast", this);
+        bridge.subscribe("jsEvent", this);
+    }
+
+    private Button createButton(String name) {
+        Button button = new Button(name);
+        button.addStyleName("btn");
+        button.addStyleName("btn-primary");
+        return button;
     }
 
     @Override
     public void onClick(ClickEvent event) {
-        ModelAttributes data = Responses.data();
-        data.set("value", "from GWT");
-        jsniBridge.publish("broadcast", data);
+        if (event.getSource() == broadcast) {
+            ModelAttributes data = Responses.attributes();
+            data.set("value", "Broadcast");
+            bridge.publish("broadcast", data);
+        } else if (event.getSource() == send) {
+            ModelAttributes data = Responses.attributes();
+            data.set("value", "from GWT");
+            bridge.publish("gwtEvent", data, new ModelEventCallback() {
+                @Override
+                public void resolve(ModelAttributes... responses) {
+                    Window.alert("Resolved GWT Event! " + responses.length);
+                }
+            });
+        }
     }
 
     @Override
     public void execute(ModelAttributes attributes, ModelEventCallback callback) {
+        // TODO send event id in ModelAttributes
         textArea.setText(attributes.get("value"));
-        callback.resolve();
+        ModelAttributes result = Responses.attributes();
+        result.set("result", "gwt");
+        callback.resolve(result);
     }
 
 }

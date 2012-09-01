@@ -2,66 +2,31 @@
 // Set up cross-language bridge.
 $bridge = {
 
-    eventBusInstances: [],
+    eventBus:{},
 
-    addEventBus: function(eventBus) {
-        this.eventBusInstances.push(eventBus);
+    registerEventBus:function (eventBus) {
+        this.eventBus = eventBus;
     },
 
-    subscribe: function(eventId, handler) {
-        this.eventBusInstances.map(function(eventBus) {
-            eventBus.subscribe(eventId, handler);
-        });
+    subscribe:function (eventId, handler) {
+        this.eventBus.subscribe(eventId, handler);
     },
 
-    unsubscribe: function(handler) {
-        this.eventBusInstances.map(function(eventBus) {
-            eventBus.unsubscribe(handler);
-        });
+    unsubscribe:function (handler) {
+        this.eventBus.unsubscribe(handler);
     },
 
-    publish: function(eventId, data, callback) {
-        this.eventBusInstances.map(function(eventBus) {
-            eventBus.publish(eventId, data, callback);
-        });
+    publish:function (eventId, data, callback) {
+        this.eventBus.publish(eventId, data, callback);
     },
 
-    suspend: function() {
+    suspend:function () {
         // TODO implement
     },
 
-    activate : function() {
+    activate:function () {
         // TODO implement
     }
 };
 
-var jsEventBus = {
-
-    subscribers: {},
-
-    subscribe: function(eventId, handler) {
-        var subscribers = this.subscribers[eventId];
-        if (subscribers == null) {
-            subscribers = [];
-            this.subscribers[eventId] = subscribers;
-        }
-        subscribers.push(handler);
-    },
-
-    unsubscribe: function(handler) {
-        // TODO implement
-    },
-
-    publish: function(eventId, data, callback) {
-        var subscribers = this.subscribers[eventId];
-        if (subscribers != null) {
-            subscribers.map(function(subscriber) {
-                subscriber(data, callback);
-            });
-        }
-    }
-
-};
-
-$bridge.addEventBus(jsEventBus);
 console.log('Native bridge registered');

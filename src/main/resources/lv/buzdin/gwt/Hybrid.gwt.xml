@@ -6,6 +6,7 @@
     <inherits name="com.google.gwt.user.User"/>
     <inherits name="com.google.gwt.logging.Logging"/>
 
+    <entry-point class="lv.buzdin.gwt.client.bridge.EventBridgeModule"/>
     <entry-point class="lv.buzdin.gwt.client.MainModule"/>
 
     <source path="client"/>

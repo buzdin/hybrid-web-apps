@@ -1,8 +1,9 @@
 package lv.buzdin.gwt.client.bridge.jsni;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import lv.buzdin.gwt.client.bridge.ModelAttributes;
 import lv.buzdin.gwt.client.bridge.ModelEventCallback;
-import lv.buzdin.gwt.client.bridge.ModelResponse;
+import lv.buzdin.gwt.client.bridge.Responses;
 
 /**
 * @author Dmitry Buzdin
@@ -16,21 +17,15 @@ public final class JavaScriptCallback implements ModelEventCallback {
     }
 
     @Override
-    public void resolve() {
-        _resolve(javaScriptFunction);
+    public void resolve(ModelAttributes... response) {
+        JSOResponses responses = Responses.createResponses(response);
+        _resolve(javaScriptFunction, responses);
     }
 
-    @Override
-    public void resolve(ModelResponse response) {
-        _resolve(javaScriptFunction, (JSOResponse) response);
-    }
-
-    private native void _resolve(JavaScriptObject javaScriptFunction) /*-{
-        javaScriptFunction({});
-    }-*/;
-
-    private native void _resolve(JavaScriptObject javaScriptFunction, JSOResponse response) /*-{
-        javaScriptFunction(response);
+    private native void _resolve(JavaScriptObject javaScriptFunction, JSOResponses responses) /*-{
+        if (typeof(javaScriptFunction) == "function") {
+            javaScriptFunction(responses);
+        }
     }-*/;
 
 }

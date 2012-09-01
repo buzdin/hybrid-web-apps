@@ -25,8 +25,7 @@ public final class JavaScriptInvocation {
     }
 
     // referenced from jsni
-    private void resolve(JSOResponse response) {
-        //logger.info("callback resolved");
+    private void resolve(JSOAttributes response) {
         callback.resolve(response);
     }
 
@@ -34,7 +33,7 @@ public final class JavaScriptInvocation {
                                JSOAttributes attributes) /*-{
         var self = this;
         var callback = function(result) {
-            self.@lv.buzdin.gwt.client.bridge.jsni.JavaScriptInvocation::resolve(Llv/buzdin/gwt/client/bridge/jso/JSOResponse;)(result);
+            self.@lv.buzdin.gwt.client.bridge.jsni.JavaScriptInvocation::resolve(Llv/buzdin/gwt/client/bridge/jsni/JSOAttributes;)(result);
         };
         functionReference(attributes, callback);
     }-*/;

@@ -12,8 +12,10 @@
         <div class="well">
             <label>JavaScript</label>
             <input id="question" type="text" class="span3" placeholder="Type a question..."/>
-            <button id="test" class="btn btn-primary">Send</button>
-            <span id="result" class="help-block"></span>
+            <button id="publish" class="btn btn-primary">Broadcast</button>
+            <button id="send" class="btn btn-primary">Send</button>
+            <button id="subscribe" class="btn btn-primary">Subscribe</button>
+            <span id="result" class="label"></span>
         </div>
     </div>
     <div id="gwt-view" class="span6">
@@ -28,28 +30,45 @@
 <script type="text/javascript" src="hybrid/hybrid.nocache.js"></script>
 <script type="text/javascript">
 
-    $(function() {
-        $bridge.subscribe('jsEvent', function (attrs, fn) {
-            $('#result').val(attrs.value);
+    $(function () {
+        $('#result').html('hello');
+    });
+
+    $('#subscribe').click(function () {
+        $bridge.subscribe('gwtEvent', function (attrs, fn) {
+            $('#result').html(attrs.value);
             fn();
         });
 
         $bridge.subscribe('broadcast', function (attrs, fn) {
-            $('#result').val(attrs.value);
-            fn();
+            $('#result').html(attrs.value);
+            fn({value:'js'});
         });
     });
 
-    $('#test').click(function () {
+    $('#publish').click(function () {
         var question = $("#question").val();
 
         $bridge.publish(
-            'broadcast',
-            {
-                value: question
-            }, function (response) {
-                $('#result').val('Answer is : ' + response.answer);
-            }
+                'broadcast',
+                {
+                    value:question
+                }, function (response) {
+                    response.results.map(function (result) {
+                        $('#result').html('Answer is : ' + result.value);
+                    });
+                }
+        )
+    });
+
+    $('#send').click(function () {
+        var question = $("#question").val();
+
+        $bridge.publish(
+                'jsEvent',
+                {
+                    value:question
+                }
         )
     });
 </script>

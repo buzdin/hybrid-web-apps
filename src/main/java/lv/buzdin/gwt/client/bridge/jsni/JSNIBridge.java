@@ -1,8 +1,8 @@
-package lv.buzdin.gwt.client.bridge;
+package lv.buzdin.gwt.client.bridge.jsni;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import lv.buzdin.gwt.client.bridge.jsni.JavaScriptCallback;
-import lv.buzdin.gwt.client.bridge.jsni.JavaScriptFunction;
+import lv.buzdin.gwt.client.bridge.*;
+import lv.buzdin.gwt.client.bridge.impl.AggregateEventCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 /**
  * @author dmitry.buzdin
  */
-public final class JSNIBridge {
+public final class JSNIBridge implements EventBridge {
 
     private static final Logger logger = Logger.getLogger("jsni-bridge");
 
@@ -26,15 +26,18 @@ public final class JSNIBridge {
         instance = this;
     }
 
+    @Override
     public void addEventPreview(BridgeEventPreview preview) {
         previews.add(preview);
     }
 
+    @Override
     public void removeEventPreview(BridgeEventPreview preview) {
         previews.remove(preview);
     }
 
-    public void unregister(ModelCommand command) {
+    @Override
+    public void unsubscribe(ModelCommand command) {
         for (List<ModelCommand> commandMap : instance.eventHandlerMap.values()) {
             commandMap.remove(command);
         }
@@ -45,7 +48,7 @@ public final class JSNIBridge {
         instance.subscribe(eventId, new JavaScriptFunction(function));
     }
 
-    // Intended to be called from Java
+    @Override
     public void subscribe(String eventId, ModelCommand handler) {
         logger.info("SUB >>> '" + eventId + "' id : " + handler.hashCode());
 
@@ -62,12 +65,12 @@ public final class JSNIBridge {
         instance.publish(eventId, data, new JavaScriptCallback(resultCallback));
     }
 
-    // Intended to be called from Java
+    @Override
     public void publish(String eventId, ModelAttributes data) {
         publish(eventId, data, NullCallback.INSTANCE);
     }
 
-    // Intended to be called from Java
+    @Override
     public void publish(String eventId, ModelAttributes data, ModelEventCallback callback) {
         logger.info("PUB >>> '" + eventId);
 
@@ -76,15 +79,20 @@ public final class JSNIBridge {
             logger.info("No subscribers found for " + eventId);
             return;
         }
+        logger.info("Subscribers count " + commandList.size());
 
-        // Event Previews are guaranteed to be first
         for (BridgeEventPreview preview : previews) {
             preview.onEvent(eventId, data);
         }
 
+        AggregateEventCallback aggregateEventCallback = new AggregateEventCallback();
         for (ModelCommand command : commandList) {
-            command.execute(data, callback);
+            command.execute(data, aggregateEventCallback);
         }
+
+        List<ModelAttributes> responses = aggregateEventCallback.getResponses();
+        ModelAttributes[] sample = new ModelAttributes[responses.size()];
+        callback.resolve(responses.toArray(sample));
     }
 
     public void registerJsFunctions() {
@@ -100,11 +108,11 @@ public final class JSNIBridge {
         }
 
         var gwtEventbus = {};
-        gwtEventbus.subscribe = $entry(@lv.buzdin.gwt.client.bridge.JSNIBridge::subscribe(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;));
-        gwtEventbus.unsubscribe = function() {};
-        gwtEventbus.publish = $entry(@lv.buzdin.gwt.client.bridge.JSNIBridge::publish(Ljava/lang/String;Llv/buzdin/gwt/client/bridge/ModelAttributes;Lcom/google/gwt/core/client/JavaScriptObject;));
+        gwtEventbus.subscribe = $entry(@lv.buzdin.gwt.client.bridge.jsni.JSNIBridge::subscribe(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;));
+        gwtEventbus.unsubscribe = function() {}; // TODO
+        gwtEventbus.publish = $entry(@lv.buzdin.gwt.client.bridge.jsni.JSNIBridge::publish(Ljava/lang/String;Llv/buzdin/gwt/client/bridge/ModelAttributes;Lcom/google/gwt/core/client/JavaScriptObject;));
 
-        $wnd.$bridge.addEventBus(gwtEventbus);
+        $wnd.$bridge.registerEventBus(gwtEventbus);
     }-*/;
 
     private static final class NullCallback implements ModelEventCallback {
@@ -112,10 +120,7 @@ public final class JSNIBridge {
         public static final NullCallback INSTANCE = new NullCallback();
 
         @Override
-        public void resolve() { }
-
-        @Override
-        public void resolve(ModelResponse response) { }
+        public void resolve(ModelAttributes... attributes) { }
 
     }
 
