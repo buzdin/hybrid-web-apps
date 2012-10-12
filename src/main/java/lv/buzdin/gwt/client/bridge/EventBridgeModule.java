@@ -10,8 +10,8 @@ public class EventBridgeModule implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
-        JSNIBridge bridge = new JSNIBridge();
-        bridge.registerJsFunctions();
+//        JSNIBridge bridge = new JSNIBridge();
+//        bridge.registerJsFunctions();
     }
 
 }

@@ -3,6 +3,7 @@ package lv.buzdin.gwt.client.bridge.jsni;
 import com.google.gwt.core.client.JavaScriptObject;
 import lv.buzdin.gwt.client.bridge.*;
 import lv.buzdin.gwt.client.bridge.impl.AggregateEventCallback;
+import lv.buzdin.gwt.client.bridge.impl.NullCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
+ * GWT centric bridge implementation. Good for GWT<->JS integration with single module.
+ *
  * @author dmitry.buzdin
  */
 public final class JSNIBridge implements EventBridge {
@@ -114,14 +117,5 @@ public final class JSNIBridge implements EventBridge {
 
         $wnd.$bridge.registerEventBus(gwtEventbus);
     }-*/;
-
-    private static final class NullCallback implements ModelEventCallback {
-
-        public static final NullCallback INSTANCE = new NullCallback();
-
-        @Override
-        public void resolve(ModelAttributes... attributes) { }
-
-    }
 
 }

@@ -47,13 +47,14 @@
     });
 
     $('#publish').click(function () {
-        var question = $("#question").val();
+        var value = 'JS : ' + $("#question").val();
 
         $bridge.publish(
                 'broadcast',
                 {
-                    value:question
+                    value: value
                 }, function (response) {
+                    // TODO merge results
                     response.results.map(function (result) {
                         $('#result').html('Answer is : ' + result.value);
                     });
@@ -71,6 +72,8 @@
                 }
         )
     });
+
+    console.log("Attached JS handlers");
 </script>
 </body>
 </html>

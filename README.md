@@ -14,3 +14,4 @@ TODO List
 * composite commands
 * over-network commands
 * set of demos as separate modules
+* hierarchical event topic model

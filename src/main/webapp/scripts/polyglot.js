@@ -29,4 +29,43 @@ $bridge = {
     }
 };
 
+var jsEventBus = {
+
+    subscribers: {},
+
+    subscribe: function(eventId, handler) {
+        var subscribers = this.subscribers[eventId];
+        if (subscribers == null) {
+            subscribers = [];
+            this.subscribers[eventId] = subscribers;
+        }
+        subscribers.push(handler);
+    },
+
+    unsubscribe: function(handler) {
+        // TODO implement
+    },
+
+    publish: function(eventId, data, callback) {
+        var subscribers = this.subscribers[eventId];
+        var results = [];
+
+        if (subscribers != null) {
+            subscribers.map(function(subscriber) {
+                subscriber(data, function(response) {
+                    console.log(response);
+                    results.push(response);
+                });
+            });
+        }
+
+        // Returning array of subscriber results
+        if (typeof(callback) == "function") {
+            callback({results: results});
+        }
+    }
+
+};
+
+$bridge.registerEventBus(jsEventBus);
 console.log('Native bridge registered');
