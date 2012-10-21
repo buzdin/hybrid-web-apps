@@ -2,7 +2,6 @@ package lv.buzdin.gwt.client.bridge.jsni;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.user.client.Window;
 import lv.buzdin.gwt.client.bridge.*;
 import lv.buzdin.gwt.client.bridge.impl.NullCallback;
 
