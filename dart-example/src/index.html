@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hybrid Web App Demo</title>
+    <link rel="stylesheet"
+          href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"/>
+</head>
+<body>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript"
+        src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"></script>
+
+<script type="application/dart" src="interop/sample.dart"></script>
+<script src="http://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js"></script>
+
+<script type="text/javascript" src="scripts/polyglot.js"></script>
+<script type="text/javascript">
+    $bridge.subscribe('dartEvent', function (attrs, fn) {
+        alert(attrs.value);
+        fn();
+    });
+
+    console.log("JS Initialized");
+</script>
+</body>
+</html>

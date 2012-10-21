@@ -31,9 +31,9 @@ $bridge = {
 
 var jsEventBus = {
 
-    subscribers: {},
+    subscribers:{},
 
-    subscribe: function(eventId, handler) {
+    subscribe:function (eventId, handler) {
         var subscribers = this.subscribers[eventId];
         if (subscribers == null) {
             subscribers = [];
@@ -42,17 +42,17 @@ var jsEventBus = {
         subscribers.push(handler);
     },
 
-    unsubscribe: function(handler) {
+    unsubscribe:function (handler) {
         // TODO implement
     },
 
-    publish: function(eventId, data, callback) {
+    publish:function (eventId, data, callback) {
         var subscribers = this.subscribers[eventId];
         var results = [];
 
         if (subscribers != null) {
-            subscribers.map(function(subscriber) {
-                subscriber(data, function(response) {
+            subscribers.map(function (subscriber) {
+                subscriber(data, function (response) {
                     console.log(response);
                     results.push(response);
                 });
@@ -61,7 +61,7 @@ var jsEventBus = {
 
         // Returning array of subscriber results
         if (typeof(callback) == "function") {
-            callback({results: results});
+            callback({results:results});
         }
     }
 

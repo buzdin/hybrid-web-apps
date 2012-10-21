@@ -1,0 +1,7 @@
+name: js_interop
+
+dependencies:
+  js:
+    hosted: js
+  JsonObject:
+    git: git://github.com/chrisbu/dartwatch-JsonObject.git
